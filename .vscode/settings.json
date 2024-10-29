@@ -2,6 +2,14 @@
     "files.associations": {
         "iosfwd": "cpp",
         "*.tcc": "cpp",
-        "string": "cpp"
+        "string": "cpp",
+        "ostream": "cpp",
+        "utility": "cpp",
+        "xstring": "cpp",
+        "vector": "cpp",
+        "span": "cpp",
+        "xhash": "cpp",
+        "xtree": "cpp",
+        "xutility": "cpp"
     }
 }

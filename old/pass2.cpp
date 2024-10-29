@@ -17,7 +17,7 @@ public:
         processLiteral();
     }
 
-    vector<string> split(string s) {
+    vector<string> split(const string& s) {
         vector<string> vect;
         stringstream ss(s);
         string word;
@@ -38,6 +38,11 @@ public:
 
     void processSymbol() {
         ifstream fs("symbol.txt");
+        if (!fs.is_open()) {
+            cerr << "Error: Unable to open symbol.txt file." << endl;
+            exit(1);
+        }
+
         string line;
         while (getline(fs, line)) {
             vector<string> s = split(line);
@@ -55,6 +60,11 @@ public:
 
     void processLiteral() {
         ifstream fs("literal.txt");
+        if (!fs.is_open()) {
+            cerr << "Error: Unable to open literal.txt file." << endl;
+            exit(1);
+        }
+
         string line;
         while (getline(fs, line)) {
             vector<string> s = split(line);
@@ -75,44 +85,64 @@ public:
 
     void getData(const string& line, string& lc, string& opcode, string& op1, string& op2) {
         stringstream ss(line);
-        string part1, part2, part3, part4;
+        ss >> lc >> opcode >> op1 >> op2;
+    }
 
-        ss >> part1;
-        if (ss >> part2) part2 = part2;
-        if (ss >> part3) part3 = part3;
-        if (ss >> part4) part4 = part4;
+    // Function to decode symbol and literal based on (S, x) or (L, x)
+    int decodeOperand(const string& operand) {
+        if (operand.empty()) return 0;
 
-        if (part1[0] == '(') {
-            lc = "";
-            opcode = part1;
-            op1 = part2;
-            op2 = part3;
-        } else {
-            lc = part1;
-            opcode = part2;
-            op1 = part3;
-            op2 = part4;
+        // Check if the operand is a symbol or a literal
+        char type = operand[1]; // Get the type (S or L)
+        int index = safeStringToInt(operand.substr(3, operand.length() - 4)); // Get the index
+
+        if (type == 'S' && index < symbol.size()) {
+            return symbol[index].second; // Get symbol location counter
         }
+        else if (type == 'L' && index < literal.size()) {
+            return literal[index].second; // Get literal location counter
+        }
+
+        return 0;
     }
 
     void generateMachineCode(const string& line, ofstream& outputFile) {
         string lc, opcode, op1, op2;
         getData(line, lc, opcode, op1, op2);
 
-        if (opcode.substr(1, 2) == "IS") {
-            string code = opcode.substr(4, 2);
-            string codeOp1 = (op1 != "") ? op1.substr(3, 2) : "00";
-            string codeOp2 = (op2 != "") ? op2.substr(4, 1) : "0";
+        if (opcode.substr(1, 2) == "IS") { // Imperative Statement
+            string code = opcode.substr(4, 2);  // Extract operation code
+            int operand1 = decodeOperand(op1);  // Decode first operand
+            int operand2 = decodeOperand(op2);  // Decode second operand
 
             // Output the formatted machine code
             outputFile << setw(2) << setfill('0') << code << " "
-                       << setw(2) << setfill('0') << codeOp1 << " "
-                       << setw(1) << setfill('0') << codeOp2 << endl;
+                       << setw(2) << setfill('0') << operand1 << " "
+                       << setw(1) << setfill('0') << operand2 << endl;
+        }
+        else if (opcode.substr(1, 2) == "DL") { // Declarative Statement
+            // Handle DL statements, like DC (Define Constant) or DS (Define Storage)
+            if (op1 == "(C") {
+                int constantValue = safeStringToInt(op2.substr(0, op2.length() - 1)); // Extract constant
+                outputFile << "00 00 " << setw(2) << setfill('0') << constantValue << endl;
+            }
+        }
+        else if (opcode.substr(1, 2) == "AD") {
+            // Assembler Directives are typically ignored in machine code generation
+            return;
+        }
+        else {
+            cerr << "Error: Unsupported opcode format: " << opcode << " in line: " << line << endl;
         }
     }
 
     void processIntermediateCode(const string& filename, ofstream& outputFile) {
         ifstream fs(filename);
+        if (!fs.is_open()) {
+            cerr << "Error: Unable to open intermediate code file: " << filename << endl;
+            exit(1);
+        }
+
         string line;
         while (getline(fs, line)) {
             generateMachineCode(line, outputFile);
