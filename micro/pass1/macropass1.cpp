@@ -124,7 +124,7 @@ void Generate::inout()
             MNT mne;
             //cout<<"\n"<<kpdtPtr<<" "<<pnPtr<<" "<<word;
             mne.kpdtPointer = kpdtPtr;
-            mne.mdtPointer = pnPtr;
+            mne.mdtPointer = mdtPtr;
             macroname = word;
             macroIndex++;
             //cout<<macroIndex<<" ";

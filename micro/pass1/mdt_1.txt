@@ -1,0 +1,12 @@
+1 MOVER (P,3)   (P,1)
+2 ADD (P,3)   (P,2)
+3 MOVEM (P,3)   (P,1)
+4 MEND 
+5 MOVER (P,3)   (P,1)
+6 ADD (P,3)   (P,2)
+7 MOVEM (P,3)   (P,1)
+8 MEND 
+9 MOVER (P,3)   (P,1)
+10 ADD (P,3)   (P,2)
+11 MOVEM (P,3)   (P,1)
+12 MEND 

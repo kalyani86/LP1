@@ -6,15 +6,6 @@
 #include <sstream>
 using namespace std;
 
-class APTABEntry
-{
-public:
-    int index;
-    string parameterName;
-
-    APTABEntry(int idx, const string &paramName)
-        : index(idx), parameterName(paramName) {}
-};
 
 class MNT
 {

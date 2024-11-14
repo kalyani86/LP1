@@ -99,6 +99,7 @@ class Pass1
                     fout<<" ("<<opcode["DC"].first<<","<<opcode["DC"].second<<" ) ";
                     littab[litindex].second = LC;
                     string literal = littab[litindex].first;
+                    cout<<literal<<endl;
                     string sublit = literal.substr(4,literal.length() - 7);
                     fout<<" (C, "<<sublit<< ")";
                     fout<<endl;
@@ -114,11 +115,11 @@ class Pass1
                 {
                     fout<<LC;
                     fout<<" ("<<opcode["DC"].first<<", "<<opcode["DC"].second<<") ";
-                    littab[litindex].second = LC;
                     string literal = littab[litindex].first;
                     string sublit = literal.substr(4,literal.length() - 7);
                     fout<<" (C, "<<sublit<< ")";
                     fout<<endl;
+                    littab[litindex].second = LC;
                     LC++;
                 }
             }
